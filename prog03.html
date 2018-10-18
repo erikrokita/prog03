@@ -1,0 +1,424 @@
+<html>
+	<head>
+		<title>Ultimate bowling competition</title>
+		<link rel="stylesheet" type="text/css" href="prog03.css">
+		<script type="text/javascript">
+			function calculateScore(team, turn, prevTurn){
+				//---Get elements---//
+				var score1 = document.getElementById("p" + team + turn + "1");
+				var score2 = document.getElementById("p" + team + turn + "2");
+				var score3 = document.getElementById("p" + team + turn + "3");
+				var prevScore1 = document.getElementById("p" + team + prevTurn + "1");
+				var prevScore2 = document.getElementById("p" + team + prevTurn + "2");
+				var scoreType = document.getElementById("p" + team + turn + "s");
+				var output = document.getElementById("out" + team + turn + "x");
+				var prevOutput = document.getElementById("out" + team + prevTurn + "x");
+				
+				//DEBUG
+				console.log("-----------------------------");
+				console.log("score1: " + score1.id + " " + score1.value);
+				console.log("score2: " + score2.id + " " + score2.value);
+				if (score3 != null) console.log("score3: " + score3.id + " " + score3.value);
+				if (prevScore1 != null) console.log("prevScore1: " + prevScore1.id + " " + prevScore1.value);
+				if (prevScore2 != null) console.log("prevScore2: " + prevScore2.id + " " + prevScore2.value);
+				console.log("scoreType: " + scoreType.id + " " + scoreType.value);
+				console.log("output: " + output.id + " " + output.value);
+				if (prevOutput != null) console.log("prevOutput: " + prevOutput.id + " " + prevOutput.value);
+				
+				if (score3 != null && parseInt(score1.value) + parseInt(score2.value) > 9){
+					score3.disabled = false;
+				}
+				
+				//---correct errors in fields---//
+				
+				//---Calculate score---//
+				if (score3 != null){
+					output.value = parseInt(score1.value) + parseInt(score2.value) + parseInt(score3.value) + parseInt(prevOutput.value);
+					console.log("output after calculation (last turn): " + output.value);
+				}else{
+					if (prevOutput != null){
+						output.value = parseInt(score1.value) + parseInt(score2.value) + parseInt(prevOutput.value);
+					}else{
+						output.value = parseInt(score1.value) + parseInt(score2.value);
+					}
+					console.log("output after calculation: " + output.value);
+				}
+				
+				if (parseInt(score1.value) + parseInt(score2.value) > 9 && parseInt(score2.value) > 0){
+					console.log("Spare detected!");
+					score2.value = 10 - parseInt(score1.value);
+					console.log("output after spare calculation: " + output.value);
+					scoreType.value = "S";
+				}else{
+					scoreType.value = "";
+				}
+				//calculate previous score for spares
+				if (prevScore1 != null && parseInt(prevScore1.value) + parseInt(prevScore2.value) > 9){
+					var prevOutputTEMP = parseInt(prevOutput.value);
+					prevOutput.value = parseInt(score1.value) + parseInt(prevOutputTEMP);
+					console.log("previous output after spare calculation: " + prevOutput.value);
+				}	
+				
+				if (score1.value == 10){
+					console.log("Strike detected!");
+					console.log("output after strike calculation: " + output.value);
+					scoreType.value = "X";
+				}else{
+					scoreType.value = "";
+				}
+				//calculate previous score for strikes
+				if (prevScore1 != null && prevScore1.value > 9){
+					var prevOutputTEMP = parseInt(prevOutput.value);
+					prevOutput.value = parseInt(score1.value) + parseInt(score2.value) + parseInt(prevOutputTEMP);
+					console.log("previous output after strike calculation: " + prevOutput.value);
+				}
+			}
+			//change nextscores to prevscores so when calculating strikes and spares, previous scores are calculated too
+			
+		</script>
+	</head>
+	<body>
+		<h4 class="centerTXT">Bowling Game:</h4>
+		<h5>NOTES: Consecutive spares and strikes don't work properly, at least not without a bit of hasstle.</h5>
+		<fieldset>
+			<!--form below calculates all values
+			 oninput=" out1ax.value = parseInt(p1a1.value) + parseInt(p1a2.value); if (parseInt(p1a1.value) + parseInt(p1a2.value) > 9) {p1a2.value = 10 - p1a1.value; p1as.value = '/'; out1ax.value += p1b1.value} if (p1a1.value >= 10) {p1as.value = 'X'; out1ax.value += out1bx.value} else {p1as.value = ''}
+							out1bx.value = parseInt(p1b1.value) + parseInt(p1b2.value) + parseInt(out1ax.value); if (parseInt(p1b1.value) + parseInt(p1b2.value) > 10) {p1b2.value = 10 - p1b1.value} if (p1b1.value == 10) {p1bs.value = 'X'} else {p1bs.value = ''}
+							out1cx.value = parseInt(p1c1.value) + parseInt(p1c2.value) + parseInt(out1bx.value); if (parseInt(p1c1.value) + parseInt(p1c2.value) > 10) {p1c2.value = 10 - p1c1.value} if (p1c1.value == 10) {p1cs.value = 'X'} else {p1cs.value = ''}
+							out1dx.value = parseInt(p1d1.value) + parseInt(p1d2.value) + parseInt(out1cx.value); if (parseInt(p1d1.value) + parseInt(p1d2.value) > 10) {p1d2.value = 10 - p1d1.value} if (p1d1.value == 10) {p1ds.value = 'X'} else {p1ds.value = ''}
+							out1ex.value = parseInt(p1e1.value) + parseInt(p1e2.value) + parseInt(out1dx.value); if (parseInt(p1e1.value) + parseInt(p1e2.value) > 10) {p1e2.value = 10 - p1e1.value} if (p1e1.value == 10) {p1es.value = 'X'} else {p1es.value = ''}
+							out1fx.value = parseInt(p1f1.value) + parseInt(p1f2.value) + parseInt(out1ex.value); if (parseInt(p1f1.value) + parseInt(p1f2.value) > 10) {p1f2.value = 10 - p1f1.value} if (p1f1.value == 10) {p1fs.value = 'X'} else {p1fs.value = ''}
+							out1gx.value = parseInt(p1g1.value) + parseInt(p1g2.value) + parseInt(out1fx.value); if (parseInt(p1g1.value) + parseInt(p1g2.value) > 10) {p1g2.value = 10 - p1g1.value} if (p1g1.value == 10) {p1gs.value = 'X'} else {p1gs.value = ''}
+							out1hx.value = parseInt(p1h1.value) + parseInt(p1h2.value) + parseInt(out1gx.value); if (parseInt(p1h1.value) + parseInt(p1h2.value) > 10) {p1h2.value = 10 - p1h1.value} if (p1h1.value == 10) {p1hs.value = 'X'} else {p1hs.value = ''}
+							out1ix.value = parseInt(p1i1.value) + parseInt(p1i2.value) + parseInt(out1hx.value); if (parseInt(p1i1.value) + parseInt(p1i2.value) > 10) {p1i2.value = 10 - p1i1.value} if (p1i1.value == 10) {p1is.value = 'X'} else {p1is.value = ''}
+							
+							if (parseInt(p1j1.value) + parseInt(p1j2.value) >= 10) {p1j3.disabled = false} else {p1j3.disabled = true}
+							out1jx.value = parseInt(p1j1.value) + parseInt(p1j2.value) + parseInt(p1j3.value) + parseInt(out1ix.value); if (parseInt(p1j1.value) + parseInt(p1j2.value) > 10) {p1j2.value = 10 - p1j1.value}
+							
+							
+							out2ax.value = parseInt(p2a1.value) + parseInt(p2a2.value); if (parseInt(p2a1.value) + parseInt(p2a2.value) > 10) {p2a2.value = 10 - p2a1.value}
+							out2bx.value = parseInt(p2b1.value) + parseInt(p2b2.value) + parseInt(out2ax.value); if (parseInt(p2a1.value) + parseInt(p2b2.value) > 10) {p2b2.value = 10 - p2a1.value}
+							out2cx.value = parseInt(p2c1.value) + parseInt(p2c2.value) + parseInt(out2bx.value); if (parseInt(p2a1.value) + parseInt(p2c2.value) > 10) {p2c2.value = 10 - p2b1.value}
+							out2dx.value = parseInt(p2d1.value) + parseInt(p2d2.value) + parseInt(out2cx.value); if (parseInt(p2a1.value) + parseInt(p2d2.value) > 10) {p2d2.value = 10 - p2c1.value}
+							out2ex.value = parseInt(p2e1.value) + parseInt(p2e2.value) + parseInt(out2dx.value); if (parseInt(p2a1.value) + parseInt(p2e2.value) > 10) {p2e2.value = 10 - p2d1.value}
+							out2fx.value = parseInt(p2f1.value) + parseInt(p2f2.value) + parseInt(out2ex.value); if (parseInt(p2a1.value) + parseInt(p2f2.value) > 10) {p2f2.value = 10 - p2e1.value}
+							out2gx.value = parseInt(p2g1.value) + parseInt(p2g2.value) + parseInt(out2fx.value); if (parseInt(p2a1.value) + parseInt(p2g2.value) > 10) {p2g2.value = 10 - p2f1.value}
+							out2hx.value = parseInt(p2h1.value) + parseInt(p2h2.value) + parseInt(out2gx.value); if (parseInt(p2a1.value) + parseInt(p2h2.value) > 10) {p2h2.value = 10 - p2g1.value}
+							out2ix.value = parseInt(p2i1.value) + parseInt(p2i2.value) + parseInt(out2hx.value); if (parseInt(p2a1.value) + parseInt(p2i2.value) > 10) {p2i2.value = 10 - p2h1.value}
+							
+							if (parseInt(p2j1.value) + parseInt(p2j2.value) >= 10) {p2j3.disabled = false} else {p2j3.disabled = true}
+							out2jx.value = parseInt(p2j1.value) + parseInt(p2j2.value) + parseInt(p2j3.value) + parseInt(out2ix.value); if (parseInt(p2j1.value) + parseInt(p2j2.value) > 10) {p2j2.value = 10 - p2j1.value}"
+			-->
+			<form>
+				<table>	<!--Table to hold all bowling scores-->
+					<tr class="setBorder">		<!--Player 1 scores-->
+						<td class="scoreContainer1">	<!--Turn 1-->
+							<table class="setBorder setTurnField">	<!--nested table to house scores of each player's turn-->
+								<tr>
+									<input type="button" id="pb1a" value="calculate" onClick="calculateScore(1, 'a', '')" />
+								</tr>
+								<tr>
+									<td><input type="number" id="p1a1" value="0" min="0" max="10" /></td>
+									<td><input type="number" id="p1a2" value="0" min="0" max="10" /></td>
+								</tr>
+								<tr class="setOutField">
+									<td><output name="out1ax" id="out1ax" for="p1a1 p1a2">0</output></td>
+									<td class="outText"><input type="text" id="p1as" value="" disabled /></td>
+								</tr>
+							</table>
+						</td>
+						<td class="scoreContainer1">	<!--Turn 2-->
+							<table class="setBorder setTurnField">
+								<tr>
+									<input type="button" id="pb1b" value="calculate" onClick="calculateScore(1, 'b', 'a')" />
+								</tr>
+								<tr>
+									<td><input type="number" id="p1b1" value="0" min="0" max="10" /></td>
+									<td><input type="number" id="p1b2" value="0" min="0" max="10" /></td>
+								</tr>
+								<tr class="setOutField">
+									<td><output name="out1bx" id="out1bx" for="p1b1 p1b2">0</output></td>
+									<td class="outText"><input type="text" id="p1bs" value="" disabled /></td>
+								</tr>
+							</table>
+						</td>
+						<td class="scoreContainer1">	<!--Turn 3-->
+							<table class="setBorder setTurnField">
+								<tr>
+									<input type="button" id="pb1c" value="calculate" onClick="calculateScore(1, 'c', 'b')" />
+								</tr>
+								<tr>
+									<td><input type="number" id="p1c1" value="0" min="0" max="10" /></td>
+									<td><input type="number" id="p1c2" value="0" min="0" max="10" /></td>
+								</tr>
+								<tr class="setOutField">
+									<td><output name="out1cx" id="out1cx" for="p1c1 p1c2">0</output></td>
+									<td class="outText"><input type="text" id="p1cs" value="" disabled /></td>
+								</tr>
+							</table>
+						</td>
+						<td class="scoreContainer1">	<!--Turn 4-->
+							<table class="setBorder setTurnField">
+								<tr>
+									<input type="button" id="pb1d" value="calculate" onClick="calculateScore(1, 'd', 'c')" />
+								</tr>
+								<tr>
+									<td><input type="number" id="p1d1" value="0" min="0" max="10" /></td>
+									<td><input type="number" id="p1d2" value="0" min="0" max="10" /></td>
+								</tr>
+								<tr class="setOutField">
+									<td><output name="out1dx" id="out1dx" for="p1d1 p1d2">0</output></td>
+									<td class="outText"><input type="text" id="p1ds" value="" disabled /></td>
+								</tr>
+							</table>
+						</td>
+						<td class="scoreContainer1">	<!--Turn 5-->
+							<table class="setBorder setTurnField">
+								<tr>
+									<input type="button" id="pb1e" value="calculate" onClick="calculateScore(1, 'e', 'd')" />
+								</tr>
+								<tr>
+									<td><input type="number" id="p1e1" value="0" min="0" max="10" /></td>
+									<td><input type="number" id="p1e2" value="0" min="0" max="10" /></td>
+								</tr>
+								<tr class="setOutField">
+									<td><output name="out1ex" id="out1ex" for="p1e1 p1e2">0</output></td>
+									<td class="outText"><input type="text" id="p1es" value="" disabled /></td>
+								</tr>
+							</table>
+						</td>
+						<td class="scoreContainer1">	<!--Turn 6-->
+							<table class="setBorder setTurnField">
+								<tr>
+									<input type="button" id="pb1f" value="calculate" onClick="calculateScore(1, 'f', 'e')" />
+								</tr>
+								<tr>
+									<td><input type="number" id="p1f1" value="0" min="0" max="10" /></td>
+									<td><input type="number" id="p1f2" value="0" min="0" max="10" /></td>
+								</tr>
+								<tr class="setOutField">
+									<td><output name="out1fx" id="out1fx" for="p1f1 p1f2">0</output></td>
+									<td class="outText"><input type="text" id="p1fs" value="" disabled /></td>
+								</tr>
+							</table>
+						</td>
+						<td class="scoreContainer1">	<!--Turn 7-->
+							<table class="setBorder setTurnField">
+								<tr>
+									<input type="button" id="pb1g" value="calculate" onClick="calculateScore(1, 'g', 'f')" />
+								</tr>
+								<tr>
+									<td><input type="number" id="p1g1" value="0" min="0" max="10" /></td>
+									<td><input type="number" id="p1g2" value="0" min="0" max="10" /></td>
+								</tr>
+								<tr class="setOutField">
+									<td><output name="out1gx" id="out1gx" for="p1g1 p1g2">0</output></td>
+									<td class="outText"><input type="text" id="p1gs" value="" disabled /></td>
+								</tr>
+							</table>
+						</td>
+						<td class="scoreContainer1">	<!--Turn 8-->
+							<table class="setBorder setTurnField">
+								<tr>
+									<input type="button" id="pb1h" value="calculate" onClick="calculateScore(1, 'h', 'g')" />
+								</tr>
+								<tr>
+									<td><input type="number" id="p1h1" value="0" min="0" max="10" /></td>
+									<td><input type="number" id="p1h2" value="0" min="0" max="10" /></td>
+								</tr>
+								<tr class="setOutField">
+									<td><output name="out1hx" id="out1hx" for="p1h1 p1h2">0</output></td>
+									<td class="outText"><input type="text" id="p1hs" value="" disabled /></td>
+								</tr>
+							</table>
+						</td>
+						<td class="scoreContainer1">	<!--Turn 9-->
+							<table class="setBorder setTurnField">
+								<tr>
+									<input type="button" id="pb1i" value="calculate" onClick="calculateScore(1, 'i', 'h')" />
+								</tr>
+								<tr>
+									<td><input type="number" id="p1i1" value="0" min="0" max="10" /></td>
+									<td><input type="number" id="p1i2" value="0" min="0" max="10" /></td>
+								</tr>
+								<tr class="setOutField">
+									<td><output name="out1ix" id="out1ix" for="p1i1 p1i2">0</output></td>
+									<td class="outText"><input type="text" id="p1is" value="" disabled /></td>
+								</tr>
+							</table>
+						</td>
+						<td class="scoreContainer1">	<!--Turn 10-->
+							<table class="setBorder setTurnField">
+								<tr>
+									<input type="button" id="pb1j" value="calculate" onClick="calculateScore(1, 'j', 'i')" />
+								</tr>
+								<tr>
+									<td><input type="number" id="p1j1" value="0" min="0" max="10" /></td>
+									<td><input type="number" id="p1j2" value="0" min="0" max="10" /></td>
+									<td><input type="number" id="p1j3" value="0" min="0" max="10" disabled /></td>
+								</tr>
+								<tr class="setOutField">
+									<td><output name="out1jx" id="out1jx" for="p1j1 p1j2 p1j3">0</output></td>
+									<td class="outText2"><input type="text" id="p1js" value="" disabled /></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr class="setBorder">		<!--Player 2 scores-->
+						<td class="scoreContainer2">	<!--Turn 1-->
+							<table class="setBorder setTurnField">	<!--nested table to house scores of each player's turn-->
+								<tr>
+									<input type="button" id="pb2a" value="calculate" onClick="calculateScore(2, 'a', '')" />
+								</tr>
+								<tr>
+									<td><input type="number" id="p2a1" value="0" min="0" max="10" /></td>
+									<td><input type="number" id="p2a2" value="0" min="0" max="10" /></td>
+								</tr>
+								<tr class="setOutField">
+									<td><output name="out2ax" id="out2ax" for="p2a1 p2a2">0</output></td>
+									<td class="outText"><input type="text" id="p2as" value="" disabled /></td>
+								</tr>
+							</table>
+						</td>
+						<td class="scoreContainer2">	<!--Turn 2-->
+							<table class="setBorder setTurnField">
+								<tr>
+									<input type="button" id="pb2b" value="calculate" onClick="calculateScore(2, 'b', 'a')" />
+								</tr>
+								<tr>
+									<td><input type="number" id="p2b1" value="0" min="0" max="10" /></td>
+									<td><input type="number" id="p2b2" value="0" min="0" max="10" /></td>
+								</tr>
+								<tr class="setOutField">
+									<td><output name="out2bx" id="out2bx" for="p2b1 p2b2">0</output></td>
+									<td class="outText"><input type="text" id="p2bs" value="" disabled /></td>
+								</tr>
+							</table>
+						</td>
+						<td class="scoreContainer2">	<!--Turn 3-->
+							<table class="setBorder setTurnField">
+								<tr>
+									<input type="button" id="pb2c" value="calculate" onClick="calculateScore(2, 'c', 'b')" />
+								</tr>
+								<tr>
+									<td><input type="number" id="p2c1" value="0" min="0" max="10" /></td>
+									<td><input type="number" id="p2c2" value="0" min="0" max="10" /></td>
+								</tr>
+								<tr class="setOutField">
+									<td><output name="out2cx" id="out2cx" for="p2c1 p2c2">0</output></td>
+									<td class="outText"><input type="text" id="p2cs" value="" disabled /></td>
+								</tr>
+							</table>
+						</td>
+						<td class="scoreContainer2">	<!--Turn 4-->
+							<table class="setBorder setTurnField">
+								<tr>
+									<input type="button" id="pb2d" value="calculate" onClick="calculateScore(2, 'd', 'c')" />
+								</tr>
+								<tr>
+									<td><input type="number" id="p2d1" value="0" min="0" max="10" /></td>
+									<td><input type="number" id="p2d2" value="0" min="0" max="10" /></td>
+								</tr>
+								<tr class="setOutField">
+									<td><output name="out2dx" id="out2dx" for="p2d1 p2d2">0</output></td>
+									<td class="outText"><input type="text" id="p2ds" value="" disabled /></td>
+								</tr>
+							</table>
+						</td>
+						<td class="scoreContainer2">	<!--Turn 5-->
+							<table class="setBorder setTurnField">
+								<tr>
+									<input type="button" id="pb2e" value="calculate" onClick="calculateScore(2, 'e', 'd')" />
+								</tr>
+								<tr>
+									<td><input type="number" id="p2e1" value="0" min="0" max="10" /></td>
+									<td><input type="number" id="p2e2" value="0" min="0" max="10" /></td>
+								</tr>
+								<tr class="setOutField">
+									<td><output name="out2ex" id="out2ex" for="p2e1 p2e2">0</output></td>
+									<td class="outText"><input type="text" id="p2es" value="" disabled /></td>
+								</tr>
+							</table>
+						</td>
+						<td class="scoreContainer2">	<!--Turn 6-->
+							<table class="setBorder setTurnField">
+								<tr>
+									<input type="button" id="pb2f" value="calculate" onClick="calculateScore(2, 'f', 'e')" />
+								</tr>
+								<tr>
+									<td><input type="number" id="p2f1" value="0" min="0" max="10" /></td>
+									<td><input type="number" id="p2f2" value="0" min="0" max="10" /></td>
+								</tr>
+								<tr class="setOutField">
+									<td><output name="out2fx" id="out2fx" for="p2f1 p2f2">0</output></td>
+									<td class="outText"><input type="text" id="p2fs" value="" disabled /></td>
+								</tr>
+							</table>
+						</td>
+						<td class="scoreContainer2">	<!--Turn 7-->
+							<table class="setBorder setTurnField">
+								<tr>
+									<input type="button" id="pb2g" value="calculate" onClick="calculateScore(2, 'g', 'f')" />
+								</tr>
+								<tr>
+									<td><input type="number" id="p2g1" value="0" min="0" max="10" /></td>
+									<td><input type="number" id="p2g2" value="0" min="0" max="10" /></td>
+								</tr>
+								<tr class="setOutField">
+									<td><output name="out2gx" id="out2gx" for="p2g1 p2g2">0</output></td>
+									<td class="outText"><input type="text" id="p2gs" value="" disabled /></td>
+								</tr>
+							</table>
+						</td>
+						<td class="scoreContainer2">	<!--Turn 8-->
+							<table class="setBorder setTurnField">
+								<tr>
+									<input type="button" id="pb2h" value="calculate" onClick="calculateScore(2, 'h', 'g')" />
+								</tr>
+								<tr>
+									<td><input type="number" id="p2h1" value="0" min="0" max="10" /></td>
+									<td><input type="number" id="p2h2" value="0" min="0" max="10" /></td>
+								</tr>
+								<tr class="setOutField">
+									<td><output name="out2hx" id="out2hx" for="p2h1 p2h2">0</output></td>
+									<td class="outText"><input type="text" id="p2hs" value="" disabled /></td>
+								</tr>
+							</table>
+						</td>
+						<td class="scoreContainer2">	<!--Turn 9-->
+							<table class="setBorder setTurnField">
+								<tr>
+									<input type="button" id="pb2i" value="calculate" onClick="calculateScore(2, 'i', 'h')" />
+								</tr>
+								<tr>
+									<td><input type="number" id="p2i1" value="0" min="0" max="10" /></td>
+									<td class="outText"><input type="number" id="p2i2" value="0" min="0" max="10" /></td>
+								</tr>
+								<tr class="setOutField">
+									<td><output name="out2ix" id="out2ix" for="p2i1 p2i2">0</output></td>
+									<td><input type="text" id="p2is" value="" disabled /></td>
+								</tr>
+							</table>
+						</td>
+						<td class="scoreContainer2">	<!--Turn 10-->
+							<table class="setBorder setTurnField">
+								<tr>
+									<input type="button" id="pb2j" value="calculate" onClick="calculateScore(2, 'j', 'i')" />
+								</tr>
+								<tr>
+									<td><input type="number" id="p2j1" value="0" min="0" max="10" /></td>
+									<td><input type="number" id="p2j2" value="0" min="0" max="10" /></td>
+									<td><input type="number" id="p2j3" value="0" min="0" max="10" disabled /></td>
+								</tr>
+								<tr class="setOutField">
+									<td><output name="out2jx" id="out2jx" for="p2j1 p2j2 p2j3">0</output></td>
+									<td class="outText2"><input type="text" id="p2js" value="" disabled /></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</form>
+		</fieldset>
+	</body>		
+</html>

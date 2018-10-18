@@ -1,0 +1,39 @@
+h5{
+	margin: 2% 5%;
+}
+input, output{
+	width: 100%;
+	font-size: 110%;
+}
+output{
+	font-size: 150%;
+}
+fieldset{
+	background-color: #eeeeee;
+}
+			
+.centerTXT{
+	text-align: center;
+				font-size: 200%;
+}
+.scoreContainer1{
+	background-color: #ffcccc;
+}
+.scoreContainer2{
+	background-color: #ccccff;
+}
+.setTurnField, .setOutField{
+	width: 100%;
+}
+.outText{
+	width: 50%;
+}
+.outText2{
+	width: 33.33%;
+}
+.setOutField{
+	text-align: center;
+}
+.setBorder{
+	border: 1px solid;
+}
